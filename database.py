@@ -37,10 +37,35 @@ def init_db():
         FOREIGN KEY (model_id) REFERENCES models (id)
     )
     """)
+
+    # Telegram Subscribers
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS subscribers (
+        chat_id INTEGER PRIMARY KEY,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Notification Queue
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS notification_queue (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        message TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        sent BOOLEAN DEFAULT 0
+    )
+    """)
     
     conn.commit()
     conn.close()
     print(f"Database {DB_NAME} initialized.")
+
+def add_notification(message):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO notification_queue (message) VALUES (?)", (message,))
+    conn.commit()
+    conn.close()
 
 def save_models(models_list):
     conn = get_connection()

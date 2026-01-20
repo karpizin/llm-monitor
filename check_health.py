@@ -3,7 +3,7 @@ import os
 import time
 import requests
 import logging
-from database import get_connection
+from database import get_connection, add_notification
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +31,11 @@ def run_health_check():
     logger.info("Health checks completed.")
 
 def check_model(model_id, cursor):
+    # 1. Get previous state
+    cursor.execute("SELECT success FROM checks WHERE model_id = ? ORDER BY timestamp DESC LIMIT 1", (model_id,))
+    row = cursor.fetchone()
+    prev_success = row[0] if row else None
+
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
@@ -67,6 +72,15 @@ def check_model(model_id, cursor):
         INSERT INTO checks (model_id, status_code, latency_ms, success, error_msg)
         VALUES (?, ?, ?, ?, ?)
     """, (model_id, status_code, latency_ms, success, error_msg))
+    
+    # Detect state change
+    if prev_success is not None and prev_success != success:
+        if success:
+            msg = f"🟢 Model restored: {model_id}"
+        else:
+            msg = f"🔴 Model down: {model_id} ({error_msg})"
+        add_notification(msg)
+        logger.info(f"Notification queued: {msg}")
     
     if success:
         logger.info(f"✅ {model_id}: {latency_ms}ms")

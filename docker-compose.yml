@@ -12,3 +12,33 @@ services:
     environment:
       - DB_PATH=/data/monitor.db
       - PYTHONUNBUFFERED=1
+
+  bot:
+    build: .
+    container_name: llm-monitor-bot
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    env_file:
+      - .env
+    environment:
+      - DB_PATH=/data/monitor.db
+      - PYTHONUNBUFFERED=1
+    command: ["python", "telegram_bot.py"]
+    depends_on:
+      - monitor
+
+  bot:
+    build: .
+    container_name: llm-monitor-bot
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    env_file:
+      - .env
+    environment:
+      - DB_PATH=/data/monitor.db
+      - PYTHONUNBUFFERED=1
+    command: ["python", "telegram_bot.py"]
+    depends_on:
+      - monitor
