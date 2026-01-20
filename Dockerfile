@@ -15,12 +15,5 @@ RUN mkdir -p /data
 # Переменная для БД
 ENV DB_PATH=/data/monitor.db
 
-# Аргумент и переменная для API ключа
-ARG OPENROUTER_API_KEY
-ENV OPENROUTER_API_KEY=$OPENROUTER_API_KEY
-
-ARG TELEGRAM_BOT_TOKEN
-ENV TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
-
 # Запуск
 CMD ["python", "main_loop.py"]
