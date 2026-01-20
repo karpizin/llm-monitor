@@ -28,10 +28,12 @@ services:
     depends_on:
       - monitor
 
-  bot:
+  dashboard:
     build: .
-    container_name: llm-monitor-bot
+    container_name: llm-monitor-dashboard
     restart: unless-stopped
+    ports:
+      - "8000:8000"
     volumes:
       - ./data:/data
     env_file:
@@ -39,6 +41,6 @@ services:
     environment:
       - DB_PATH=/data/monitor.db
       - PYTHONUNBUFFERED=1
-    command: ["python", "telegram_bot.py"]
+    command: ["python", "web_app.py"]
     depends_on:
       - monitor
