@@ -72,3 +72,4 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
           OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}
+          TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
