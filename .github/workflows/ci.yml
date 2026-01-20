@@ -33,6 +33,8 @@ jobs:
     - name: Integration Test (Discovery)
       # This script hits a public API, so it's a good smoke test
       run: python discovery_free.py
+      env:
+        OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
   docker-build:
     runs-on: ubuntu-latest
