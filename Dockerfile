@@ -12,8 +12,12 @@ COPY . .
 # Создание директории для данных (если volume не примонтирован)
 RUN mkdir -p /data
 
-# Переменная для БД (чтобы скрипты знали где искать)
+# Переменная для БД
 ENV DB_PATH=/data/monitor.db
+
+# Аргумент и переменная для API ключа
+ARG OPENROUTER_API_KEY
+ENV OPENROUTER_API_KEY=$OPENROUTER_API_KEY
 
 # Запуск
 CMD ["python", "main_loop.py"]
